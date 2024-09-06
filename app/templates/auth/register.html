@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sign_in.css') }}" />
+    <style>
+        body.background {
+            background-image: url('{{ url_for('static', filename='img/login-bg.jpg') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+    </style>
+</head>
+<body class="background">
+    <div class="container">
+        <div class="login-form">
+            <h2>Register</h2>
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input placeholder="name" class="input" type="text" id="name" name="name" required />
+                    {% if errors.name %}
+                    <span class="error">{{ errors.name }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input placeholder="email" class="input" type="email" id="email" name="email" required />
+                    {% if errors.email %}
+                    <span class="error">{{ errors.email }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input placeholder="password" class="input" type="password" id="password" name="password" required />
+                    {% if errors.password %}
+                    <span class="error">{{ errors.password }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input placeholder="confirm password" class="input" type="password" id="confirm_password" name="confirm_password" required />
+                    {% if errors.confirm_password %}
+                    <span class="error">{{ errors.confirm_password }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input placeholder="phone" class="input" type="text" id="phone" name="phone" required />
+                    {% if errors.phone %}
+                    <span class="error">{{ errors.phone }}</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <button type="submit">Sign Up
+                        <div class="arrow-wrapper">
+                            <div class="arrow"></div>
+                    </button>
+                </div>
+            </form>
+            <div class="signup-link">
+                <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
