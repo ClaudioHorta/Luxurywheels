@@ -1,0 +1,197 @@
+{% extends "base.html" %} {% block title %}Booking{% endblock %} {% block
+content %}
+<!-- Page Header Start -->
+<div class="container-fluid page-header" style="margin-top: 50px">
+  <h1 class="display-3 text-uppercase text-white mb-3">Car Booking</h1>
+  <div class="d-inline-flex text-white">
+    <h6 class="text-uppercase m-0"><a class="text-white" href="">Home</a></h6>
+    <h6 class="text-body m-0 px-3">/</h6>
+    <h6 class="text-uppercase text-body m-0">Car Booking</h6>
+    <h6 class="text-body m-0 px-3">/</h6>
+    <h6 class="text-uppercase text-body m-0">Payment</h6>
+  </div>
+</div>
+<!-- Page Header End -->
+
+<!-- Payment Form Start -->
+<div class="container-fluid pb-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="bg-secondary p-5 mb-5">
+          <h2 class="text-primary mb-4">Payment</h2>
+          <p class="mb-4" style="color: aliceblue">
+            You will be charged €{{ price }}.
+          </p>
+          <form
+            method="POST"
+            action="{{ url_for('rental.payment_page', car_id=car_id) }}"
+            id="payment-form"
+            onsubmit="return validateForm()"
+          >
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control p-4"
+                name="card_name"
+                placeholder="Name on Card"
+                required="required"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control p-4"
+                name="card_number"
+                placeholder="Card Number (16 digits)"
+                required="required"
+                pattern="\d{16}"
+                oninput="validateCardNumber(this.value)"
+              />
+              <small id="card-error" class="text-danger"></small>
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control p-4"
+                name="expiry_date"
+                placeholder="Expiry Date (MM/YY)"
+                required="required"
+                pattern="\d{2}/\d{2}"
+                oninput="validateExpiryDate(this.value)"
+              />
+              <small id="expiry-error" class="text-danger"></small>
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control p-4"
+                name="cvv"
+                placeholder="CVV (XXX)"
+                required="required"
+                pattern="\d{3,4}"
+              />
+            </div>
+            <button
+              class="btn btn-block btn-primary py-3"
+              type="button"
+              onclick="showLoader()"
+            >
+              Pay Now
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Payment Form End -->
+
+<!-- Loader Start -->
+<div id="loader" class="loader">
+  <div class="spinner"></div>
+</div>
+<!-- Loader End -->
+
+<style>
+  .loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none;
+  }
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .blur-background {
+    filter: blur(5px);
+  }
+</style>
+
+<script>
+ function validateCardNumber(number) {
+    const regex = /^\d{16}$/;  // Adjusted regex to check for exactly 16 digits
+    const cardError = document.getElementById("card-error");
+
+    if (!regex.test(number)) {
+        cardError.textContent = "Card number must be exactly 16 digits.";
+        return false;
+    }
+
+    // Clear the error message if the card number is valid
+    cardError.textContent = "";
+    return true;
+}
+
+
+
+  function validateExpiryDate(date) {
+    const [month, year] = date.split("/").map(Number);
+    const expiryError = document.getElementById("expiry-error");
+
+    if (!month || !year || month < 1 || month > 12) {
+      expiryError.textContent = "Invalid expiry date.";
+      return false;
+    }
+
+    const today = new Date();
+    const expiryDate = new Date(`20€{year}`, month - 1);
+
+    if (expiryDate <= today) {
+      expiryError.textContent = "Expiry date must be in the future.";
+      return false;
+    }
+
+    expiryError.textContent = "";
+    return true;
+  }
+
+  function validateForm() {
+    const cardNumber = document.querySelector(
+      "input[name='card_number']"
+    ).value;
+    const expiryDate = document.querySelector(
+      "input[name='expiry_date']"
+    ).value;
+
+    return validateCardNumber(cardNumber) && validateExpiryDate(expiryDate);
+  }
+
+  function showLoader() {
+    if (validateForm()) {
+      document.getElementById("loader").style.display = "flex";
+      document
+        .querySelector(".container-fluid")
+        .classList.add("blur-background");
+
+      setTimeout(function () {
+        document.getElementById("payment-form").submit();
+      }, 2000);
+    }
+  }
+</script>
+
+{% endblock %}

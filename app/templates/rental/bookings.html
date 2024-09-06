@@ -1,0 +1,584 @@
+{% extends "base.html" %} {% block content %}
+<style>
+  /* Custom styles for the booking page */
+
+  .containerr {
+    max-width: 1800px;
+  }
+  .roww {
+    display: flex;
+    margin-left: 25%;
+    flex-wrap: wrap; /* Ensure cards wrap onto new lines */
+  }
+  @media (max-width: 1100px) {
+    .roww {
+      margin-left: 0;
+      gap: 100px;
+    }
+  }
+  h2 {
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    color: #343a40;
+  }
+
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+  }
+
+  .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-title {
+    font-family: "Roboto", sans-serif;
+    font-weight: bolder;
+  }
+
+  .card-text p {
+    font-family: "Roboto", sans-serif;
+    font-size: 1rem;
+    color: #6c757d;
+  }
+
+  .card-text strong {
+    font-family: "Roboto", sans-serif;
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-top: 20px;
+  }
+
+  .alert {
+    font-family: "Roboto", sans-serif;
+    font-size: 1rem;
+  }
+
+  .alert-link {
+    color: #007bff;
+  }
+
+  .alert-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+</style>
+<!-- Page Header Start -->
+<div class="container-fluid page-header" style="margin-top: 50px">
+  <h1 class="display-3 text-uppercase text-white mb-3">My Bookings</h1>
+  <div class="d-inline-flex text-white">
+    <h6 class="text-uppercase m-0">
+      <a class="text-white" href="">Home</a>
+    </h6>
+    <h6 class="text-body m-0 px-3">/</h6>
+    <h6 class="text-uppercase text-body m-0">My Bookings</h6>
+  </div>
+</div>
+<!-- Page Header Start -->
+
+<div class="containerr my-5">
+  <h2 class="text-center mb-5 text-secondary">Upcoming Bookings</h2>
+  {% if upcoming_bookings %}
+  <div class="roww" style="gap: 40px">
+    {% for booking in upcoming_bookings %}
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-primary">
+            <strong> {{ booking.car_name }}</strong>
+          </h5>
+          <p class="card-text">
+            <br />
+            <strong>Booking Dates:</strong> {{
+            booking.booking.start_date.strftime('%Y-%m-%d') }} to {{
+            booking.booking.end_date.strftime('%Y-%m-%d') }}<br /><br />
+            <strong>Special Request:</strong> {{ booking.booking.special_request
+            }}<br /><br />
+            <strong>Total Bill:</strong> {{ booking.booking.price }}<br /><br />
+            <strong>Date Created:</strong> {{
+            booking.booking.timestamp.strftime('%Y-%m-%d') }}<br /><br />
+            <!-- <strong>Time:</strong> {{
+            booking.booking.timestamp.strftime('%H:%M:%S') }} -->
+          </p>
+          <div class="text-right mt-4 mb-2">
+            <a
+              href="#"
+              class="btn btn-primary edit-booking"
+              data-toggle="modal"
+              data-target="#editBookingModal"
+              data-booking-id="{{ booking.booking.id }}"
+              data-start-date="{{ booking.booking.start_date.strftime('%Y-%m-%d') }}"
+              data-end-date="{{ booking.booking.end_date.strftime('%Y-%m-%d') }}"
+            >
+              Edit Booking
+            </a>
+            <a
+              href="#"
+              class="btn btn-secondary cancel-booking"
+              data-toggle="modal"
+              data-target="#cancelBookingModal"
+              data-booking-id="{{ booking.booking.id }}"
+              data-start-date="{{ booking.booking.start_date.strftime('%Y-%m-%d') }}"
+            >
+              Cancel Booking
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal start -->
+    <div
+      class="modal fade"
+      id="editBookingModal"
+      tabindex="-1"
+      aria-labelledby="editBookingModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="editBookingForm" action="/edit-booking" method="post">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editBookingModalLabel">
+                Edit Booking
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input
+                type="hidden"
+                name="booking_id"
+                id="bookingId"
+                value="{{booking.booking.id}}"
+              />
+              <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="startDate"
+                  name="start_date"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="endDate"
+                  name="end_date"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Save changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Modal End -->
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info mt-5 text-center" role="alert">
+    You have no bookings.
+    <a href="{{ url_for('rental.car') }}" class="alert-link">Search for cars</a>
+    to make a booking.
+  </div>
+  {% endif %}
+
+  <h2 class="text-center mb-5 text-secondary">Started Bookings</h2>
+  {% if started_bookings %}
+  <div class="roww" style="gap: 40px">
+    {% for booking in started_bookings %}
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-primary">
+            <strong> {{ booking.car_name }}</strong>
+          </h5>
+          <p class="card-text">
+            <br />
+            <strong>Booking Dates:</strong> {{
+            booking.booking.start_date.strftime('%Y-%m-%d') }} to {{
+            booking.booking.end_date.strftime('%Y-%m-%d') }}<br /><br />
+            <strong>Special Request:</strong> {{ booking.booking.special_request
+            }}<br /><br />
+            <strong>Total Bill:</strong> {{ booking.booking.price }}<br /><br />
+            <strong>Date Created:</strong> {{
+            booking.booking.timestamp.strftime('%Y-%m-%d') }}<br /><br />
+            <!-- <strong>Time:</strong> {{
+            booking.booking.timestamp.strftime('%H:%M:%S') }} -->
+          </p>
+          <div class="text-right mt-4 mb-2">
+            <a
+              href="#"
+              class="btn btn-primary edit-booking"
+              data-toggle="modal"
+              data-target="#editBookingModal"
+              data-booking-id="{{ booking.booking.id }}"
+              data-start-date="{{ booking.booking.start_date.strftime('%Y-%m-%d') }}"
+              data-end-date="{{ booking.booking.end_date.strftime('%Y-%m-%d') }}"
+            >
+              Edit Booking
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal start -->
+    <div
+      class="modal fade"
+      id="editBookingModal"
+      tabindex="-1"
+      aria-labelledby="editBookingModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="editBookingForm" action="/edit-booking" method="post">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editBookingModalLabel">
+                Edit Booking
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input
+                type="hidden"
+                name="booking_id"
+                id="bookingId"
+                value="{{booking.booking.id}}"
+              />
+              <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="endDate"
+                  name="end_date"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Save changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Modal End -->
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info mt-5 text-center" role="alert">
+    You have no bookings in progress.
+  </div>
+  {% endif %}
+
+  <h2 class="text-center mb-5 text-secondary">Completed Bookings</h2>
+  {% if completed_bookings %}
+  <div class="roww" style="gap: 40px">
+    {% for booking in completed_bookings %}
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-primary">
+            <strong> {{ booking.car_name }}</strong>
+          </h5>
+          <p class="card-text">
+            <br />
+            <strong>Booking Dates:</strong> {{
+            booking.booking.start_date.strftime('%Y-%m-%d') }} to {{
+            booking.booking.end_date.strftime('%Y-%m-%d') }}<br /><br />
+            <strong>Special Request:</strong> {{ booking.booking.special_request
+            }}<br /><br />
+            <strong>Total Bill:</strong> {{ booking.booking.price }}<br /><br />
+            <strong>Date Created:</strong> {{
+            booking.booking.timestamp.strftime('%Y-%m-%d') }}<br /><br />
+            <!-- <strong>Time:</strong> {{
+            booking.booking.timestamp.strftime('%H:%M:%S') }} -->
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal start -->
+    <div
+      class="modal fade"
+      id="editBookingModal"
+      tabindex="-1"
+      aria-labelledby="editBookingModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="editBookingForm" action="/edit-booking" method="post">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editBookingModalLabel">
+                Edit Booking
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input
+                type="hidden"
+                name="booking_id"
+                id="bookingId"
+                value="{{booking.booking.id}}"
+              />
+              <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="startDate"
+                  name="start_date"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="endDate"
+                  name="end_date"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Save changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Modal End -->
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info mt-5 text-center" role="alert">
+    You have no completed Bookings.
+  </div>
+  {% endif %}
+
+  <!-- Cancel Booking Modal -->
+  <div
+    class="modal fade"
+    id="cancelBookingModal"
+    tabindex="-1"
+    aria-labelledby="cancelBookingModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="cancelBookingForm" action="/cancel-booking" method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cancelBookingModalLabel">
+              Cancel Booking
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="booking_id" id="cancelBookingId" />
+            <p id="cancelBookingMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-danger"
+              id="confirmCancelBooking"
+            >
+              Confirm Cancellation
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    €("#editBookingModal").on("show.bs.modal", function (event) {
+      var button = €(event.relatedTarget);
+      var bookingId = button.data("booking-id");
+      var startDate = button.data("start-date");
+      var endDate = button.data("end-date");
+
+      var modal = €(this);
+      modal.find("#editBookingId").val(bookingId);
+      modal.find("#startDate").val(startDate);
+      modal.find("#endDate").val(endDate);
+    });
+
+    €("#cancelBookingModal").on("show.bs.modal", function (event) {
+      var button = €(event.relatedTarget);
+      var bookingId = button.data("booking-id");
+      var startDate = new Date(button.data("start-date"));
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      var modal = €(this);
+      modal.find("#cancelBookingId").val(bookingId);
+
+      if (startDate <= today) {
+        modal
+          .find("#cancelBookingMessage")
+          .text("This booking cannot be cancelled as it has already started.");
+        modal.find("#confirmCancelBooking").hide();
+      } else {
+        modal
+          .find("#cancelBookingMessage")
+          .text("Are you sure you want to cancel this booking?");
+        modal.find("#confirmCancelBooking").show();
+      }
+    });
+
+    €("#editBookingForm").on("submit", function (event) {
+      event.preventDefault();
+
+      // Get the start date from the form
+      var startDateInput = €("#startDate").val();
+      var startDate = new Date(startDateInput);
+      var today = new Date();
+
+      // Remove the time portion from today's date for comparison
+      today.setHours(0, 0, 0, 0);
+
+      // Check if the start date is before today
+      if (startDate < today) {
+        alert(
+          "Booking cannot be edited because the start date has already passed."
+        );
+        return; // Stop the form submission
+      }
+
+      // Proceed with the AJAX request if the date is valid
+      €.ajax({
+        url: "/edit-booking",
+        method: "POST",
+        data: €(this).serialize(),
+        success: function (response) {
+          if (response.success) {
+            // Update the booking dates on the page dynamically
+            var bookingId = response.booking_id;
+            console.log(bookingId);
+            var startDate = response.start_date;
+            var endDate = response.end_date;
+            var request = response.request;
+            var bill = response.bill;
+            var created = response.created;
+            var time = response.time;
+
+            €('a[data-booking-id="' + bookingId + '"]')
+              .closest(".card")
+              .find(".card-text")
+              .html(
+                `<br />
+            <strong>Booking Dates:</strong> €{startDate} to €{endDate}<br /><br />
+            <strong>Special Request:</strong> €{request} <br /><br />
+            <strong>Total Bill:</strong> €{bill}<br /><br />
+            <strong>Date Created:</strong> €{created} <br /><br />`
+              );
+
+            €("#editBookingModal").modal("hide");
+          }
+        },
+      });
+    });
+
+    €("#cancelBookingForm").on("submit", function (event) {
+      event.preventDefault();
+
+      €.ajax({
+        url: "/cancel-booking",
+        method: "POST",
+        data: €(this).serialize(),
+        success: function (response) {
+          if (response.success) {
+            // Remove the booking card from the page dynamically
+            var bookingId = €("#cancelBookingId").val();
+            €('a[data-booking-id="' + bookingId + '"]')
+              .closest(".col-lg-4")
+              .remove();
+
+            €("#cancelBookingModal").modal("hide");
+          }
+        },
+      });
+    });
+  });
+</script>
+
+{% endblock %}

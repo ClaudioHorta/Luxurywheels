@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}Booking{% endblock %}
+
+{% block content %}
+    <!-- Page Header Start -->
+    <div class="container-fluid page-header" style="margin-top: 50px;">
+        <h1 class="display-3 text-uppercase text-white mb-3">Car Booking</h1>
+        <div class="d-inline-flex text-white">
+            <h6 class="text-uppercase m-0">
+                <a class="text-white" href="">Home</a>
+            </h6>
+            <h6 class="text-body m-0 px-3">/</h6>
+            <h6 class="text-uppercase text-body m-0">Car Booking</h6>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+    <!-- Detail Start -->
+    <div class="container-fluid pt-5">
+        <div class="container pt-5 pb-3">
+            <h1 class="display-4 text-uppercase mb-5">{{ car.brand }} {{ car.model }}</h1>
+            <div class="row align-items-center pb-2">
+                <div class="col-lg-6 mb-4">
+                    <img
+                        class="img-fluid"
+                        src="{{ url_for('static', filename=car.image_url) }}"
+                        alt="{{ car.model }}"
+                    />
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <h4 class="mb-2">€{{ car.daily_rate }}/Day</h4>
+                    <div class="d-flex mb-3">
+                        <h6 class="mr-2">Rating:</h6>
+                        <div class="d-flex align-items-center justify-content-center mb-1">
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            <small class="fa fa-star-half-alt text-primary mr-1"></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-n3 mt-lg-0 pb-4" style="padding: 30px; font-size: large;">
+                <div class="col-md-3 col-6 mb-5">
+                    <i class="fa fa-car text-primary mr-2"></i>
+                    <span>Model: {{ car.model }}</span>
+                </div>
+                <div class="col-md-3 col-6 mb-5">
+                    <i class="fa fa-road text-primary h-20 w-20 mr-1"></i>
+                    <span>Category: {{ car.category }}</span>
+                </div>
+                <div class="col-md-3 col-6 mb-5">
+                    <i class="fa fa-cogs text-primary mr-2"></i>
+                    <span>Transmission: {{ car.transmission }}</span>
+                </div>
+                <div class="col-md-3 col-6 mb-5">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        fill="currentColor"
+                        class="bi bi-people-fill text-primary mr-2"
+                        viewBox="0 0 16 16"
+                    >
+                        <path
+                            d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"
+                        />
+                    </svg>
+                    <span>People: {{ car.number_of_people }}</span>
+                </div>
+                <div class="col-md-3 col-6 mb-5">
+                    <i class="fa fa-car text-primary mr-2"></i>
+                    <span>Vehicle Type: {{ car.vehicle_type }}</span>
+                </div>
+                <div class="col-md-3 col-6 mb-5">
+                    <i
+                        class="text-primary mr-2"
+                        style="font-size: larger; font-weight: bolder"
+                    >€</i>
+                    <span>Daily Rate: €{{ car.daily_rate }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Detail End -->
+
+    <!-- Car Booking Start -->
+    <div class="container-fluid pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2 class="mb-4">Personal Detail</h2>
+                    <form method="POST" action="{{ url_for('rental.book', car_id=car.id) }}" data-daily-rate="{{ car.daily_rate }}" carId="{{ car.id }}"
+                    id="bookingForm">
+
+                    <div class="mb-5">
+                        <div class="row">
+                            <div class="col-6 form-group">
+                                <input
+                                    type="text"
+                                    class="form-control p-4"
+                                    name="first_name"
+                                    placeholder="First Name"
+                                    required="required"
+                                />
+                            </div>
+                            <div class="col-6 form-group">
+                                <input
+                                    type="text"
+                                    class="form-control p-4"
+                                    name="last_name"
+                                    placeholder="Last Name"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 form-group">
+                                <input
+                                    type="email"
+                                    class="form-control p-4"
+                                    placeholder="Your Email"
+                                    name="email"
+                                    required="required"
+                                />
+                            </div>
+                            <div class="col-6 form-group">
+                                <input
+                                    type="text"
+                                    class="form-control p-4"
+                                    placeholder="Mobile Number"
+                                    name="mobile_number"
+                                    required="required"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="mb-4">Booking Detail</h2>
+                    <div class="mb-5">
+                        <div class="row">
+                            <div class="col-6 form-group">
+                                <label>Starting Date:</label>
+                                <input
+                                    type="date"
+                                    class="form-control p-4"
+                                    name="start_date"
+                                    id="start_date"
+                                    required="required"
+                                    placeholder="Starting Date"
+                                />
+                            </div>
+                            <div class="col-6 form-group">
+                                <label>Ending Date:</label>
+
+                                <input
+                                    type="date"
+                                    class="form-control p-4"
+                                    name="end_date"
+                                    id="end_date"
+                                    required="required"
+                                />
+                            </div>
+                        </div>
+                        <div class="form-group" style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                            <button type="button" id="checkAvailability" class="btn btn-block btn-secondary py-3">Check Availability</button>
+                            <p style="margin-top: 10px;" id="availabilityStatus"></p>
+                        </div>
+                        <div class="form-group">
+                            <textarea
+                                class="form-control py-3 px-4"
+                                name="special_request"
+                                rows="3"
+                                placeholder="Special Request"
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="bg-secondary p-5 mb-5">
+                        <h2 class="text-primary mb-4">Payment</h2>
+                        <div class="form-group">
+                            <input type="hidden" name="price" id="price" />
+                            <p style="color: white;" id="priceDisplay"></p>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    class="custom-control-input"
+                                    name="payment_method"
+                                    id="card"
+                                    value="Credit Card"
+                                    required="required"
+                                />
+                                <label class="custom-control-label" for="card">Credit Card</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="reserveButton" disabled class="btn btn-block btn-primary py-3">
+                            Reserve Now
+                        </button>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Car Booking End -->
+
+    <script>
+    $(document).ready(function() {
+        $('#end_date').on('blur', function() {
+            validateDates();
+        });
+
+        $('#reserveButton').on('click', function() {
+            var startDateInput = document.getElementById('start_date');
+            var endDateInput = document.getElementById('end_date');
+            var startDate = new Date(startDateInput.value);
+            var endDate = new Date(endDateInput.value);
+            var today = new Date();
+            today.setHours(0, 0, 0, 0); // Resetting the time to the start of the day
+
+            if (startDate < today) {
+                alert("Booking for a past date is not possible.");
+                return;
+            }
+
+            if (!startDate || !endDate) {
+                alert('Please enter both start and end dates');
+                return;
+            }
+            if (startDate > endDate) {
+                alert("End date must be after start date.");
+                return;
+            }
+        });
+
+        $('#checkAvailability').on('click', function() {
+            checkAvailability();
+        });
+
+        function checkAvailability() {
+            var form = document.getElementById('bookingForm');
+            var carId = form.getAttribute('carId');
+            var startDate = $('#start_date').val();
+            var endDate = $('#end_date').val();
+            var startDateInput = document.getElementById('start_date');
+            var endDateInput = document.getElementById('end_date');
+            var startDate1 = new Date(startDateInput.value);
+            var endDate1 = new Date(endDateInput.value);
+
+            if (!startDate1 || !endDate1) {
+                alert('Please enter both start and end dates');
+                return;
+            }
+            var today = new Date();
+            today.setHours(0, 0, 0, 0); // Resetting the time to the start of the day
+
+            if (startDate1 < today) {
+                alert("Booking for a past date is not possible.");
+                return;
+            }
+
+            if (startDate1 > endDate1) {
+                alert("End date must be after start date.");
+                return;
+            }
+
+            $.ajax({
+                url: '/check_availability',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    car_id: carId,
+                    start_date: startDate,
+                    end_date: endDate
+                }),
+                success: function(response) {
+                    var availabilityStatus = $('#availabilityStatus');
+                    var reserveButton = $('#reserveButton');
+
+                    if (response.available) {
+                        availabilityStatus.text('Car is available').addClass('available').removeClass('not-available');
+                        reserveButton.prop('disabled', false);
+                    } else {
+                        availabilityStatus.text(`Car is not available from ${response.booked_start} to ${response.booked_end}`).addClass('not-available').removeClass('available');
+                        reserveButton.prop('disabled', true);
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('An error occurred while checking availability');
+                }
+            });
+        }
+
+        function validateDates() {
+            var startDateInput = document.getElementById('start_date');
+            var endDateInput = document.getElementById('end_date');
+            var startDate = new Date(startDateInput.value);
+            var endDate = new Date(endDateInput.value);
+
+            if (startDateInput.value && endDateInput.value) {
+                if (startDate <= endDate) {
+                    calculatePrice();
+                } else {
+                    alert("End date must be after start date.");
+                    endDateInput.value = '';
+                }
+            }
+        }
+
+        function calculatePrice() {
+            var startDateInput = document.getElementById('start_date');
+            var endDateInput = document.getElementById('end_date');
+            var startDate = new Date(startDateInput.value);
+            var endDate = new Date(endDateInput.value);
+
+            var diffTime = Math.abs(endDate - startDate);
+            var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            var form = document.getElementById('bookingForm');
+            var dailyRate = form.getAttribute('data-daily-rate');
+            var price = (diffDays + 1) * dailyRate;
+            document.getElementById('price').value = price;
+            document.getElementById('priceDisplay').innerText = "Total Price: €" + price;
+        }
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends "base.html" %} {% block title %}Booking{% endblock %} {% block
+content %}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header" style="margin-top: 50px">
+  <h1 class="display-3 text-uppercase text-white mb-3">Car Listing</h1>
+  <div class="d-inline-flex text-white">
+    <h6 class="text-uppercase m-0"><a class="text-white" href="">Home</a></h6>
+    <h6 class="text-body m-0 px-3">/</h6>
+    <h6 class="text-uppercase text-body m-0">Car Listing</h6>
+  </div>
+</div>
+<!-- Page Header Start -->
+
+<!-- Search Form Start -->
+<div class="container-fluid">
+  <div class="container pb-3">
+    <h1 class="display-4 text-uppercase text-center mb-5">Available Cars</h1>
+    <h1 class="display-6 text-uppercase text-center mb-5">Apply Filters</h1>
+    <form method="GET" id="filterForm" onsubmit="return FilterCars();">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <input
+            type="text"
+            class="form-control"
+            name="brand"
+            placeholder="Brand"
+          />
+        </div>
+        <div class="col-md-3 mb-3">
+          <input
+            type="text"
+            class="form-control"
+            name="model"
+            placeholder="Model"
+          />
+        </div>
+        <div class="col-md-3 mb-3">
+          <select class="form-control" name="category">
+            <option value="">Select Category</option>
+            {% for category in categories %}
+            <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+            <!-- Add more categories as needed -->
+          </select>
+        </div>
+        <div class="col-md-2 mb-3">
+          <input
+            type="number"
+            class="form-control"
+            name="min_rate"
+            id="min_rate"
+            placeholder="Minimum Rate"
+          />
+        </div>
+        <div class="col-md-2 mb-3">
+          <input
+            type="number"
+            class="form-control"
+            name="max_rate"
+            id="max_rate"
+            placeholder="Maximum Rate"
+          />
+        </div>
+        <div class="col-md-3 mb-3">
+          <button type="submit" class="btn btn-primary">Filter Cars</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="resetFilters()"
+            style="margin-left: 10px"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Search Form End -->
+
+<!-- Rent A Car Start -->
+<div class="container-fluid pb-5">
+  <div class="container pb-3">
+    <h1 class="display-6 text-uppercase text-center mb-5">
+      Or Search By Keywords
+    </h1>
+
+    <form
+      method="GET"
+      id="searchForm"
+      onsubmit="return searchCars();"
+      style="
+        display: flex;
+        justify-content: center;
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+      "
+      class="my-2 my-lg-0"
+    >
+      <input
+        name="keyword"
+        class="form-control mr-sm-2"
+        type="search"
+        placeholder="Search anything (e.g., Volkswagen Tiguan)"
+        aria-label="Search"
+      />
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        Search
+      </button>
+    </form>
+
+    <div class="row mt-5" id="carResults">
+      {% for car in rows %}
+      <div class="col-lg-4 col-md-6 mb-2">
+        <div class="rent-item mb-4">
+          <img
+            class="img-fluid mb-4"
+            src="{{ url_for('static', filename=car.image_url) }}"
+            alt="Car Image"
+          />
+          <h4 class="text-uppercase mb-4">{{ car.brand }} {{ car.model }}</h4>
+          <div class="d-flex justify-content-center mb-4">
+            <div class="px-2">
+              <i class="fa fa-car text-primary mr-1"></i>
+              <span>{{ car.brand }}</span>
+            </div>
+            <div class="px-2 border-left border-right">
+              <i class="fa fa-cogs text-primary mr-1"></i>
+              <span>{{ car.model }}</span>
+            </div>
+            <div class="px-2">
+              <i class="fa fa-road text-primary mr-1"></i>
+              <span>{{ car.category }}</span>
+            </div>
+          </div>
+          <a
+            class="btn btn-primary px-3"
+            href="{{ url_for('rental.car_detail', id=car.id) }}"
+            >{{ car.daily_rate }} €/Day</a
+          >
+        </div>
+      </div>
+      {% else %}
+      <div class="alert alert-info mt-5 text-center mx-auto" role="alert">
+        No Cars to Show. Please check filters, or refresh the page.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<!-- Rent A Car End -->
+
+<!-- Banner Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="row mx-0">
+      <div class="col-lg-6 px-0">
+        <div
+          class="px-5 bg-secondary d-flex align-items-center justify-content-between"
+          style="height: 350px"
+        >
+          <img
+            class="img-fluid flex-shrink-0 ml-n5 w-50 mr-4"
+            src="{{ url_for('static', filename='img/banner-left.png') }}"
+            alt=""
+          />
+          <div class="text-right">
+            <h3 class="text-uppercase text-light mb-3">Want to be driver?</h3>
+            <p class="mb-4">
+              Join our team of professional drivers and elevate your career.
+            </p>
+            <button
+              class="btn btn-primary py-2 px-4"
+              onclick="alert('This feature is not available right now.')"
+              href=""
+            >
+              Start Now
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 px-0">
+        <div
+          class="px-5 bg-dark d-flex align-items-center justify-content-between"
+          style="height: 350px"
+        >
+          <div class="text-left">
+            <h3 class="text-uppercase text-light mb-3">Looking for a car?</h3>
+            <p class="mb-4">
+              Discover the perfect vehicle for your needs at Luxury Wheels.
+            </p>
+            <button
+              class="btn btn-primary py-2 px-4"
+              onclick="alert('This feature is not available right now.')"
+              href=""
+            >
+              Start Now
+            </button>
+          </div>
+          <img
+            class="img-fluid flex-shrink-0 mr-n5 w-50 ml-4"
+            src="{{ url_for('static', filename='img/banner-right.png') }}"
+            alt=""
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Banner End -->
+
+<script>
+  window.addEventListener("beforeunload", () => {
+    localStorage.setItem("scrollPosition", window.scrollY);
+  });
+
+  // Scroll to the stored position when the page loads
+  window.addEventListener("load", () => {
+    const scrollPosition = localStorage.getItem("scrollPosition");
+    if (scrollPosition !== null) {
+      window.scrollTo(0, parseInt(scrollPosition, 10));
+      // Optionally clear the stored position after use
+      localStorage.removeItem("scrollPosition");
+    }
+  });
+</script>
+<script>
+  function searchCars() {
+    €.ajax({
+      url: "/car/search",
+      type: "GET",
+      data: €("#searchForm").serialize(),
+      success: function (data) {
+        €("#carResults").html(data);
+      },
+    });
+    return false; // Prevent the form from submitting the traditional way
+  }
+  function FilterCars() {
+    €.ajax({
+      url: "/car/search",
+      type: "GET",
+      data: €("#filterForm").serialize(),
+      success: function (data) {
+        €("#carResults").html(data);
+      },
+    });
+    return false; // Prevent the form from submitting the traditional way
+  }
+  function resetFilters() {
+    // Reset all form fields
+    €("#filterForm")[0].reset();
+
+    // Optionally, trigger the filter function after reset
+    FilterCars();
+  }
+</script>
+{% endblock %}
